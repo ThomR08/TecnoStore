@@ -56,7 +56,7 @@ public class Celular {
         this.precio = precio;
     }
 
-    public long getStock() {
+    public int getStock() {
         return stock;
     }
 

@@ -46,7 +46,7 @@ public class DetalleDeVenta {
         this.celular = celular;
     }
 
-    public long getCantidad() {
+    public int getCantidad() {
         return cantidad;
     }
 

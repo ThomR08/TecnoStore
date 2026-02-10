@@ -11,13 +11,13 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema mydb
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
-USE `mydb` ;
+CREATE SCHEMA IF NOT EXISTS `TecnoStore` DEFAULT CHARACTER SET utf8 ;
+USE `TecnoStore` ;
 
 -- -----------------------------------------------------
 -- Table `mydb`.`Marca`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Marca` (
+CREATE TABLE IF NOT EXISTS `TecnoStore`.`Marca` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`),
@@ -28,13 +28,13 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `mydb`.`Celular`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Celular` (
+CREATE TABLE IF NOT EXISTS `TecnoStore`.`Celular` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `marca` INT UNSIGNED NOT NULL,
   `modelo` VARCHAR(45) NOT NULL,
   `precio` DECIMAL(12,0) UNSIGNED NOT NULL,
   `stock` INT UNSIGNED NOT NULL DEFAULT 0,
-  `sistema_operativo` ENUM('ANDROID', 'IOS', 'HARMONY_OS') NULL,
+  `sistema_operativo` ENUM('ANDROID', 'IOS', 'HARMONY_OS') NOT NULL,
   `gama` ENUM('BAJA', 'MEDIA', 'ALTA') NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_Celular_1_idx` (`marca` ASC) VISIBLE,
@@ -50,7 +50,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `mydb`.`Cliente`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Cliente` (
+CREATE TABLE IF NOT EXISTS `TecnoStore`.`Cliente` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `documento` VARCHAR(45) NOT NULL,
@@ -66,7 +66,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `mydb`.`Venta`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`Venta` (
+CREATE TABLE IF NOT EXISTS `TecnoStore`.`Venta` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `cliente_id` INT UNSIGNED NOT NULL,
   `fecha` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -86,7 +86,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `mydb`.`DetalleDeVenta`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`DetalleDeVenta` (
+CREATE TABLE IF NOT EXISTS `TecnoStore`.`DetalleDeVenta` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `venta_id` INT UNSIGNED NOT NULL,
   `celular_id` INT UNSIGNED NOT NULL,
