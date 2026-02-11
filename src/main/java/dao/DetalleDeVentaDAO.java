@@ -12,8 +12,7 @@ public class DetalleDeVentaDAO {
     public DetalleDeVentaDAO(Connection con) {
         this.con = con;
     }
-
-    // Crear detalle
+    
     public void create(DetalleDeVenta detalle) throws SQLException {
 
         String sql = """
@@ -38,8 +37,7 @@ public class DetalleDeVentaDAO {
             }
         }
     }
-
-    // Leer detalle por ID (JOIN completo)
+    
     public DetalleDeVenta read(long id) throws SQLException {
 
         String sql = """
@@ -95,8 +93,7 @@ public class DetalleDeVentaDAO {
 
         return null;
     }
-
-    // Actualizar detalle
+    
     public boolean update(DetalleDeVenta detalle) throws SQLException {
 
         String sql = """
@@ -117,8 +114,7 @@ public class DetalleDeVentaDAO {
             return ps.executeUpdate() > 0;
         }
     }
-
-    // Eliminar detalle
+    
     public boolean delete(long id) throws SQLException {
 
         String sql = "DELETE FROM DetalleDeVenta WHERE id=?";
@@ -129,8 +125,7 @@ public class DetalleDeVentaDAO {
             return ps.executeUpdate() > 0;
         }
     }
-
-    // Listar detalles
+    
     public List<DetalleDeVenta> list() throws SQLException {
 
         List<DetalleDeVenta> detalles = new ArrayList<>();
@@ -147,8 +142,7 @@ public class DetalleDeVentaDAO {
                      JOIN Marca m ON c.marca = m.id
                      """;
 
-        try (PreparedStatement ps = con.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
 
@@ -182,5 +176,46 @@ public class DetalleDeVentaDAO {
         }
 
         return detalles;
+    }
+
+    public List<DetalleDeVenta> listByVenta(long ventaId) throws SQLException {
+        List<DetalleDeVenta> lista = new ArrayList<>();
+
+        String sql = """
+                     SELECT d.*, c.modelo, c.precio, m.nombre AS marca_nombre 
+                     FROM DetalleDeVenta d 
+                     JOIN Celular c ON d.celular_id = c.id 
+                     JOIN Marca m ON c.marca = m.id 
+                     WHERE d.venta_id = ?
+                     """;
+
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setLong(1, ventaId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+
+                    Marca marca = new Marca();
+                    marca.setNombre(rs.getString("marca_nombre"));
+
+                    Celular celular = new Celular();
+                    celular.setId(rs.getLong("celular_id"));
+                    celular.setModelo(rs.getString("modelo"));
+                    celular.setPrecio(rs.getBigDecimal("precio"));
+                    celular.setMarca(marca);
+
+                    DetalleDeVenta detalle = new DetalleDeVenta();
+                    detalle.setId(rs.getLong("id"));
+                    detalle.setCantidad(rs.getInt("cantidad"));
+                    detalle.setPrecio(rs.getBigDecimal("precio"));
+                    detalle.setSubtotal(rs.getBigDecimal("subtotal"));
+                    detalle.setCelular(celular);
+
+                    lista.add(detalle);
+                }
+            }
+        }
+
+        return lista;
     }
 }

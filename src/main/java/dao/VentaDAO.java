@@ -18,17 +18,16 @@ public class VentaDAO {
     public void create(Venta venta) throws SQLException {
 
         String sql = """
-                     INSERT INTO Venta(cliente_id, fecha, subtotal, iva, total)
-                     VALUES (?, ?, ?, ?, ?)
+                     INSERT INTO Venta(cliente_id, subtotal, iva, total)
+                     VALUES (?, ?, ?, ?)
                      """;
 
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             ps.setLong(1, venta.getCliente().getId());
-            ps.setTimestamp(2, Timestamp.valueOf(venta.getFecha()));
-            ps.setBigDecimal(3, venta.getSubtotal());
-            ps.setBigDecimal(4, venta.getIva());
-            ps.setBigDecimal(5, venta.getTotal());
+            ps.setBigDecimal(2, venta.getSubtotal());
+            ps.setBigDecimal(3, venta.getIva());
+            ps.setBigDecimal(4, venta.getTotal());
 
             ps.executeUpdate();
 
@@ -86,17 +85,16 @@ public class VentaDAO {
 
         String sql = """
                      UPDATE Venta 
-                     SET cliente_id=?, fecha=?, subtotal=?, iva=?, total=?
+                     SET cliente_id=?, subtotal=?, iva=?, total=?
                      WHERE id=?
                      """;
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setLong(1, venta.getCliente().getId());
-            ps.setTimestamp(2, Timestamp.valueOf(venta.getFecha()));
-            ps.setBigDecimal(3, venta.getSubtotal());
-            ps.setBigDecimal(4, venta.getIva());
-            ps.setBigDecimal(5, venta.getTotal());
+            ps.setBigDecimal(2, venta.getSubtotal());
+            ps.setBigDecimal(3, venta.getIva());
+            ps.setBigDecimal(4, venta.getTotal());
             ps.setLong(6, venta.getId());
 
             return ps.executeUpdate() > 0;

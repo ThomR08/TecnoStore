@@ -40,7 +40,7 @@ public class MenuCelular extends MenuBase {
                         eliminar();
                 }
             } catch (Exception e) {
-                System.out.println("❌\nNo se pudo realizar la accion: " + e.getMessage());
+                System.out.println("\nNo se pudo realizar la accion: " + e.getMessage());
             }
         } while (opcion != 0);
     }

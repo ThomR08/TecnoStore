@@ -2,14 +2,18 @@ package model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Venta {
+
     private long id;
     private Cliente cliente;
     private LocalDateTime fecha;
     private BigDecimal subtotal;
     private BigDecimal iva;
     private BigDecimal total;
+    private List<DetalleDeVenta> detalles = new ArrayList<>();
 
     public Venta() {
     }
@@ -71,15 +75,23 @@ public class Venta {
         this.total = total;
     }
 
+    public List<DetalleDeVenta> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetalleDeVenta> detalles) {
+        this.detalles = detalles;
+    }
+
     @Override
     public String toString() {
-        return "Venta{" +
-                "id=" + id +
-                ", cliente=" + cliente +
-                ", fecha=" + fecha +
-                ", subtotal=" + subtotal +
-                ", iva=" + iva +
-                ", total=" + total +
-                '}';
+        return "Venta{"
+                + "id=" + id
+                + ", cliente=" + cliente
+                + ", fecha=" + fecha
+                + ", subtotal=" + subtotal
+                + ", iva=" + iva
+                + ", total=" + total
+                + '}';
     }
 }

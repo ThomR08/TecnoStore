@@ -22,9 +22,9 @@ public class MenuCliente extends MenuBase {
                     3. Actualizar cliente
                     4. Eliminar cliente
                     
-                    5. Volver
+                    0. Volver
                     """);
-            opcion = input.leerIntRango("Opción: ", 0, 5);
+            opcion = input.leerIntRango("Opción: ", 0, 4);
             try {
                 switch (opcion) {
                     case 1 ->
@@ -37,9 +37,9 @@ public class MenuCliente extends MenuBase {
                         eliminar();
                 }
             } catch (Exception e) {
-                System.out.println("❌\nNo se pudo realizar la accion " + e.getMessage());
+                System.out.println("\nNo se pudo realizar la accion " + e.getMessage());
             }
-        } while (opcion != 5);
+        } while (opcion != 0);
     }
 
     private void registrar() throws Exception {
