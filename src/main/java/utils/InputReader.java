@@ -38,7 +38,7 @@ public class InputReader {
                 scanner.nextLine();
                 return valor;
             } else {
-                System.out.println("❌ Error: Debe ingresar un número entero.");
+                System.out.println("    Error: Debe ingresar un número entero.");
                 scanner.nextLine();
             }
         }
@@ -55,7 +55,7 @@ public class InputReader {
                 scanner.nextLine();
                 return valor;
             } else {
-                System.out.println("❌ Error: Debe ingresar un número válido.");
+                System.out.println("    Error: Debe ingresar un número válido.");
                 scanner.nextLine();
             }
         }
@@ -72,7 +72,7 @@ public class InputReader {
                 scanner.nextLine();
                 return valor;
             } else {
-                System.out.println("❌ Error: Debe ingresar un número decimal.");
+                System.out.println("    Error: Debe ingresar un número decimal.");
                 scanner.nextLine();
             }
         }
@@ -88,7 +88,7 @@ public class InputReader {
                 String entrada = scanner.nextLine();
                 return new BigDecimal(entrada);
             } catch (Exception e) {
-                System.out.println("❌ Error: Debe ingresar un valor monetario válido.");
+                System.out.println("    Error: Debe ingresar un valor monetario válido.");
             }
         }
     }
@@ -103,7 +103,7 @@ public class InputReader {
             if (entrada.length() == 1) {
                 return entrada.charAt(0);
             } else {
-                System.out.println("❌ Error: Debe ingresar un solo carácter.");
+                System.out.println("    Error: Debe ingresar un solo carácter.");
             }
         }
     }
@@ -116,7 +116,7 @@ public class InputReader {
             if (valor >= min && valor <= max) {
                 return valor;
             } else {
-                System.out.println("❌Error: Debe estar entre " + min + " y " + max);
+                System.out.println("    Error: Debe estar entre " + min + " y " + max);
             }
         }
     }

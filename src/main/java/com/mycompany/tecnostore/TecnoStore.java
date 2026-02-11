@@ -19,7 +19,7 @@ public class TecnoStore {
 
         } catch (Exception e) {
 
-            System.out.println("❌ Error general: " + e.getMessage());
+            System.out.println("    Error general: " + e.getMessage());
 
         } finally {
 

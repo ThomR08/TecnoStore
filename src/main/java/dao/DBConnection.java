@@ -26,7 +26,7 @@ public class DBConnection {
             try {
                 connection = DriverManager.getConnection(url, USER, PASSWORD);
             } catch (SQLException e) {
-                throw new SQLException("❌ Error al conectar con la base de datos: " + e.getMessage(), e);
+                throw new SQLException("Error al conectar con la base de datos: " + e.getMessage(), e);
             }
         }
 
@@ -40,7 +40,7 @@ public class DBConnection {
                 connection.close();
             }
         } catch (SQLException e) {
-            System.out.println("❌ Error cerrando conexión: " + e.getMessage());
+            System.out.println("Error cerrando conexión: " + e.getMessage());
         }
     }
 }

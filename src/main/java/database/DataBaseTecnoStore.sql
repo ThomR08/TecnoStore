@@ -5,17 +5,17 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema TecnoStore
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema TecnoStore
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `TecnoStore` DEFAULT CHARACTER SET utf8 ;
 USE `TecnoStore` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`Marca`
+-- Table `TecnoStore`.`Marca`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TecnoStore`.`Marca` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -26,7 +26,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Celular`
+-- Table `TecnoStore`.`Celular`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TecnoStore`.`Celular` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -41,14 +41,14 @@ CREATE TABLE IF NOT EXISTS `TecnoStore`.`Celular` (
   UNIQUE INDEX `marca_modelo_UNIQUE` (`marca`, `modelo` ASC) VISIBLE,
   CONSTRAINT `fk_Celular_1`
     FOREIGN KEY (`marca`)
-    REFERENCES `mydb`.`Marca` (`id`)
+    REFERENCES `TecnoStore`.`Marca` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Cliente`
+-- Table `TecnoStore`.`Cliente`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TecnoStore`.`Cliente` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -64,7 +64,7 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`Venta`
+-- Table `TecnoStore`.`Venta`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TecnoStore`.`Venta` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -77,14 +77,14 @@ CREATE TABLE IF NOT EXISTS `TecnoStore`.`Venta` (
   INDEX `fk_Venta_1_idx` (`cliente_id` ASC) VISIBLE,
   CONSTRAINT `fk_Venta_1`
     FOREIGN KEY (`cliente_id`)
-    REFERENCES `mydb`.`Cliente` (`id`)
+    REFERENCES `TecnoStore`.`Cliente` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`DetalleDeVenta`
+-- Table `TecnoStore`.`DetalleDeVenta`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `TecnoStore`.`DetalleDeVenta` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -98,12 +98,12 @@ CREATE TABLE IF NOT EXISTS `TecnoStore`.`DetalleDeVenta` (
   INDEX `fk_DetalleDeVenta_2_idx` (`celular_id` ASC) VISIBLE,
   CONSTRAINT `fk_DetalleDeVenta_1`
     FOREIGN KEY (`venta_id`)
-    REFERENCES `mydb`.`Venta` (`id`)
+    REFERENCES `TecnoStore`.`Venta` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_DetalleDeVenta_2`
     FOREIGN KEY (`celular_id`)
-    REFERENCES `mydb`.`Celular` (`id`)
+    REFERENCES `TecnoStore`.`Celular` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;

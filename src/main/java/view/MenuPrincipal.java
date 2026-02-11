@@ -32,9 +32,9 @@ public class MenuPrincipal extends MenuBase {
                            4. Ventas
                            
                            0. Salir
-                           """);
+                               """);
 
-            opcion = input.leerIntRango("\nOpcion: ", 0, 4);
+            opcion = input.leerIntRango("Opcion: ", 0, 4);
 
             switch (opcion) {
 
