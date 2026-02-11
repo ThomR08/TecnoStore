@@ -1,12 +1,23 @@
-package util;
+package utils;
 
+import java.math.BigDecimal;
 import java.util.Scanner;
 
 public class InputReader {
 
-    private Scanner scanner = new Scanner(System.in);
+    private static InputReader instance;
+    private Scanner scanner;
 
-    public InputReader() {}
+    private InputReader() {
+        scanner = new Scanner(System.in);
+    }
+
+    public static InputReader getInstance() {
+        if (instance == null) {
+            instance = new InputReader();
+        }
+        return instance;
+    }
 
     // ========================
     // String
@@ -24,11 +35,28 @@ public class InputReader {
             System.out.print(mensaje);
             if (scanner.hasNextInt()) {
                 int valor = scanner.nextInt();
-                scanner.nextLine(); // limpiar buffer
+                scanner.nextLine();
                 return valor;
             } else {
                 System.out.println("❌ Error: Debe ingresar un número entero.");
-                scanner.nextLine(); // descartar entrada inválida
+                scanner.nextLine();
+            }
+        }
+    }
+
+    // ========================
+    // long
+    // ========================
+    public long leerLong(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            if (scanner.hasNextLong()) {
+                long valor = scanner.nextLong();
+                scanner.nextLine();
+                return valor;
+            } else {
+                System.out.println("❌ Error: Debe ingresar un número válido.");
+                scanner.nextLine();
             }
         }
     }
@@ -51,6 +79,21 @@ public class InputReader {
     }
 
     // ========================
+    // BigDecimal
+    // ========================
+    public BigDecimal leerBigDecimal(String mensaje) {
+        while (true) {
+            try {
+                System.out.print(mensaje);
+                String entrada = scanner.nextLine();
+                return new BigDecimal(entrada);
+            } catch (Exception e) {
+                System.out.println("❌ Error: Debe ingresar un valor monetario válido.");
+            }
+        }
+    }
+
+    // ========================
     // char
     // ========================
     public char leerChar(String mensaje) {
@@ -65,8 +108,21 @@ public class InputReader {
         }
     }
 
+    public int leerIntRango(String mensaje, int min, int max) {
+        while (true) {
+
+            int valor = leerInt(mensaje);
+
+            if (valor >= min && valor <= max) {
+                return valor;
+            } else {
+                System.out.println("❌Error: Debe estar entre " + min + " y " + max);
+            }
+        }
+    }
+
     // ========================
-    // Cerrar scanner
+    // cerrar
     // ========================
     public void cerrar() {
         scanner.close();

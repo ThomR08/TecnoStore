@@ -1,16 +1,30 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
-
 package com.mycompany.tecnostore;
 
-/**
- *
- * @author thom
- */
+import dao.DBConnection;
+import utils.InputReader;
+import view.MenuPrincipal;
+import java.sql.Connection;
+
 public class TecnoStore {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+
+        try {
+            
+            Connection con = DBConnection.getConnection();
+            InputReader input = InputReader.getInstance();
+            
+            MenuPrincipal menu = new MenuPrincipal();
+            menu.iniciar();
+
+        } catch (Exception e) {
+
+            System.out.println("❌ Error general: " + e.getMessage());
+
+        } finally {
+
+            DBConnection.closeConnection();
+
+        }
     }
 }
