@@ -2,7 +2,7 @@ package view;
 
 import model.Cliente;
 import model.TipoDocumento;
-import service.GestorCliente;
+import controller.GestorCliente;
 import java.util.List;
 
 public class MenuCliente extends MenuBase {

@@ -1,4 +1,4 @@
-package service;
+package controller;
 
 import dao.DBConnection;
 import dao.MarcaDAO;

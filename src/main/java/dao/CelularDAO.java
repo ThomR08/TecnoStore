@@ -1,5 +1,6 @@
 package dao;
 
+import dto.CelularVendidoDTO;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -47,7 +48,7 @@ public class CelularDAO {
                      JOIN Marca m ON c.marca = m.id 
                      WHERE c.id = ?
                      """;
-        
+
         try (PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setLong(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -105,7 +106,7 @@ public class CelularDAO {
                      FROM Celular c 
                      JOIN Marca m ON c.marca = m.id
                      """;
-        
+
         try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
@@ -125,5 +126,103 @@ public class CelularDAO {
             }
         }
         return celulares;
+    }
+
+    public List<Celular> celularesStockBajo() throws SQLException {
+
+        List<Celular> celulares = new ArrayList<>();
+
+        String sql = """
+                     SELECT 
+                        c.id AS celular_id,
+                        c.modelo,
+                        c.precio,
+                        c.stock,
+                        c.sistema_operativo,
+                        c.gama,
+                        m.id AS marca_id,
+                        m.nombre AS marca_nombre
+                     FROM Celular c
+                     JOIN Marca m ON c.marca = m.id
+                     WHERE c.stock < 5
+                     ORDER BY c.stock ASC
+                     """;
+
+        try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                Marca marca = new Marca(rs.getLong("marca_id"), rs.getString("marca_nombre"));
+                SistemaOperativo so = SistemaOperativo.valueOf(rs.getString("sistema_operativo"));
+                Gama gama = Gama.valueOf(rs.getString("gama"));
+
+                Celular celular = new Celular(
+                        rs.getLong("celular_id"),
+                        marca,
+                        rs.getString("modelo"),
+                        rs.getBigDecimal("precio"),
+                        rs.getInt("stock"),
+                        so,
+                        gama
+                );
+
+                celulares.add(celular);
+            }
+        }
+        return celulares;
+    }
+
+    public List<CelularVendidoDTO> top3MasVendidos() throws SQLException {
+
+        List<CelularVendidoDTO> lista = new ArrayList<>();
+
+        String sql = """
+        SELECT 
+            c.id,
+            c.modelo,
+            c.precio,
+            c.stock,
+            c.sistema_operativo,
+            c.gama,
+            m.id AS marca_id,
+            m.nombre AS marca_nombre,
+            t.total_vendido
+        FROM (
+            SELECT celular_id, SUM(cantidad) AS total_vendido
+            FROM DetalleDeVenta
+            GROUP BY celular_id
+            ORDER BY total_vendido DESC
+            LIMIT 3
+        ) t
+        JOIN Celular c ON t.celular_id = c.id
+        JOIN Marca m ON c.marca = m.id
+        ORDER BY t.total_vendido DESC
+    """;
+
+        try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                Marca marca = new Marca(rs.getLong("marca_id"), rs.getString("marca_nombre"));
+                SistemaOperativo so = SistemaOperativo.valueOf(rs.getString("sistema_operativo"));
+                Gama gama = Gama.valueOf(rs.getString("gama"));
+
+                Celular celular = new Celular(
+                        rs.getLong("id"),
+                        marca,
+                        rs.getString("modelo"),
+                        rs.getBigDecimal("precio"),
+                        rs.getInt("stock"),
+                        so,
+                        gama
+                );
+
+                int totalVendido = rs.getInt("total_vendido");
+
+                lista.add(new CelularVendidoDTO(celular, totalVendido));
+            }
+        }
+
+        return lista;
     }
 }

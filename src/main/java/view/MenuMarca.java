@@ -1,7 +1,7 @@
 package view;
 
 import model.Marca;
-import service.GestorMarca;
+import controller.GestorMarca;
 
 import java.util.List;
 

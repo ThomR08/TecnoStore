@@ -4,7 +4,7 @@ import model.Celular;
 import model.Marca;
 import model.SistemaOperativo;
 import model.Gama;
-import service.GestorCelular;
+import controller.GestorCelular;
 import java.math.BigDecimal;
 import java.util.List;
 

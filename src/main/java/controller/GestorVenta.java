@@ -1,10 +1,14 @@
-package service;
+package controller;
 
 import dao.DBConnection;
 import dao.VentaDAO;
 import dao.DetalleDeVentaDAO;
 import dao.CelularDAO;
 import dao.ClienteDAO;
+import dto.VentasMensualesDTO;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import model.Venta;
 import model.DetalleDeVenta;
 import model.Cliente;
@@ -13,8 +17,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.text.DecimalFormat;
 import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GestorVenta {
 
@@ -159,32 +165,6 @@ public class GestorVenta {
         return dao.list();
     }
 
-    public boolean actualizar(Venta venta) throws Exception {
-        if (venta.getId() <= 0) {
-            throw new Exception("ID inválido");
-        }
-        if (venta.getCliente() == null || venta.getCliente().getId() <= 0) {
-            throw new Exception("Cliente obligatorio");
-        }
-        if (venta.getSubtotal() == null || venta.getSubtotal().compareTo(java.math.BigDecimal.ZERO) < 0) {
-            throw new Exception("Subtotal inválido");
-        }
-        if (venta.getIva() == null || venta.getIva().compareTo(java.math.BigDecimal.ZERO) < 0) {
-            throw new Exception("IVA inválido");
-        }
-        if (venta.getTotal() == null || venta.getTotal().compareTo(java.math.BigDecimal.ZERO) <= 0) {
-            throw new Exception("Total inválido");
-        }
-        return dao.update(venta);
-    }
-
-    public boolean eliminar(long id) throws Exception {
-        if (id <= 0) {
-            throw new Exception("ID inválido");
-        }
-        return dao.delete(id);
-    }
-
     public List<Venta> listarConDetalles() throws SQLException {
 
         Connection con = DBConnection.getConnection();
@@ -200,4 +180,131 @@ public class GestorVenta {
 
         return ventas;
     }
+    
+    public List<VentasMensualesDTO> ventasPorMes() throws SQLException {
+        return dao.ventasPorMes();
+    }
+    
+    public void generarReporteVentasTXT() throws Exception {
+
+        List<Venta> ventas = listarConDetalles();
+
+        if (ventas.isEmpty()) {
+            throw new Exception("No hay ventas registradas.");
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Guardar reporte de ventas");
+
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Archivo de texto (*.txt)", "txt"));
+        fileChooser.setSelectedFile(new File("reporte_ventas.txt"));
+
+        int userSelection = fileChooser.showSaveDialog(null);
+
+        if (userSelection != JFileChooser.APPROVE_OPTION) {
+            throw new Exception("Operación cancelada por el usuario.");
+        }
+
+        File archivo = fileChooser.getSelectedFile();
+
+        // Asegurar extensión .txt
+        if (!archivo.getName().toLowerCase().endsWith(".txt")) {
+            archivo = new File(archivo.getAbsolutePath() + ".txt");
+        }
+
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
+
+            writer.write("========== REPORTE DETALLADO DE VENTAS ==========\n\n");
+
+            for (Venta venta : ventas) {
+
+                writer.write("Venta ID: " + venta.getId() + "\n");
+                writer.write("Fecha: " + venta.getFecha() + "\n");
+                writer.write("Cliente: " + venta.getCliente().getNombre() + "\n");
+                writer.write("---------------------------------------------\n");
+
+                for (DetalleDeVenta detalle : venta.getDetalles()) {
+
+                    writer.write(
+                            detalle.getCelular().getMarca().getNombre() + " "
+                            + detalle.getCelular().getModelo()
+                            + " | Cantidad: " + detalle.getCantidad()
+                            + " | Precio: $" + df.format(detalle.getPrecio())
+                            + " | Subtotal: $" + df.format(detalle.getSubtotal())
+                            + "\n"
+                    );
+                }
+
+                writer.write("---------------------------------------------\n");
+                writer.write("Subtotal: $" + df.format(venta.getSubtotal()) + "\n");
+                writer.write("IVA: $" + df.format(venta.getIva()) + "\n");
+                writer.write("TOTAL: $" + df.format(venta.getTotal()) + "\n");
+                writer.write("=============================================\n\n");
+            }
+        }
+
+        System.out.println("\nReporte generado en: " + archivo.getAbsolutePath());
+    }
+
+    public void generarReporteVentasCSV() throws Exception {
+
+        List<Venta> ventas = listarConDetalles();
+
+        if (ventas.isEmpty()) {
+            throw new Exception("No hay ventas registradas.");
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Guardar reporte de ventas (CSV)");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Archivo CSV (*.csv)", "csv"));
+        fileChooser.setSelectedFile(new File("reporte_ventas.csv"));
+
+        int seleccion = fileChooser.showSaveDialog(null);
+
+        if (seleccion != JFileChooser.APPROVE_OPTION) {
+            throw new Exception("Operación cancelada.");
+        }
+
+        File archivo = fileChooser.getSelectedFile();
+
+        if (!archivo.getName().toLowerCase().endsWith(".csv")) {
+            archivo = new File(archivo.getAbsolutePath() + ".csv");
+        }
+
+        DecimalFormat df = new DecimalFormat("#.00");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
+
+            // Encabezado CSV
+            writer.write("VentaID,Fecha,Cliente,Celular,Marca,Cantidad,PrecioUnitario,SubtotalDetalle,SubtotalVenta,IVA,TotalVenta");
+            writer.newLine();
+
+            for (Venta venta : ventas) {
+
+                for (DetalleDeVenta detalle : venta.getDetalles()) {
+
+                    writer.write(
+                            venta.getId() + ","
+                            + venta.getFecha() + ","
+                            + venta.getCliente().getNombre() + ","
+                            + detalle.getCelular().getModelo() + ","
+                            + detalle.getCelular().getMarca().getNombre() + ","
+                            + detalle.getCantidad() + ","
+                            + df.format(detalle.getPrecio()) + ","
+                            + df.format(detalle.getSubtotal()) + ","
+                            + df.format(venta.getSubtotal()) + ","
+                            + df.format(venta.getIva()) + ","
+                            + df.format(venta.getTotal())
+                    );
+
+                    writer.newLine();
+                }
+            }
+        }
+
+        System.out.println("\nCSV generado en: " + archivo.getAbsolutePath());
+    }
+
 }

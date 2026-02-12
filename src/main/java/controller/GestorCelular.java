@@ -1,7 +1,8 @@
-package service;
+package controller;
 
 import dao.DBConnection;
 import dao.CelularDAO;
+import dto.CelularVendidoDTO;
 import model.Celular;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -76,5 +77,13 @@ public class GestorCelular {
             throw new Exception("ID inválido");
         }
         return dao.delete(id);
+    }
+    
+    public List<Celular> celularesStockBajo() throws SQLException {
+        return dao.celularesStockBajo();
+    }
+
+    public List<CelularVendidoDTO> top3MasVendidos() throws SQLException {
+        return dao.top3MasVendidos();
     }
 }

@@ -3,7 +3,7 @@ package view;
 import model.Venta;
 import model.DetalleDeVenta;
 import model.Celular;
-import service.GestorVenta;
+import controller.GestorVenta;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,12 +61,12 @@ public class MenuVenta extends MenuBase {
             detalles.add(detalle);
 
             char respuesta;
-            
+
             do {
                 respuesta = Character.toLowerCase(
                         input.leerChar("¿Agregar otro producto? (s/n): ")
                 );
-                
+
                 if (respuesta != 's' && respuesta != 'n') {
                     System.out.println("    Error: Ingrese solo 's' o 'n'.");
                 }
@@ -82,44 +82,45 @@ public class MenuVenta extends MenuBase {
         System.out.println("\n✅ Venta registrada exitosamente");
     }
 
-private boolean listar() throws Exception {
+    private boolean listar() throws Exception {
 
-    List<Venta> ventas = gestor.listarConDetalles();
+        List<Venta> ventas = gestor.listarConDetalles();
 
-    if (ventas.isEmpty()) {
-        System.out.println("\nNo hay ventas registradas.");
-        return false;
-    }
+        if (ventas.isEmpty()) {
+            System.out.println("\nNo hay ventas registradas.");
+            return false;
+        }
 
-    System.out.println("");
-    for (Venta venta : ventas) {
+        System.out.println("");
+        for (Venta venta : ventas) {
 
-        System.out.println("""
+            System.out.println("""
                 ================================
                 FACTURA N° %d
                 Cliente: %s
                 Fecha: %s
                 --------------------------------
                 """.formatted(
-                        venta.getId(),
-                        venta.getCliente().getNombre(),
-                        venta.getFecha()
-                ));
+                    venta.getId(),
+                    venta.getCliente().getNombre(),
+                    venta.getFecha()
+            ));
 
-        for (DetalleDeVenta d : venta.getDetalles()) {
-            System.out.println(
-                    d.getCelular().getMarca().getNombre() + " "
-                    + d.getCelular().getModelo()
-                    + " x" + d.getCantidad()
-                    + " - $" + d.getSubtotal()
-            );
+            for (DetalleDeVenta d : venta.getDetalles()) {
+                System.out.println(
+                        d.getCelular().getMarca().getNombre() + " "
+                        + d.getCelular().getModelo()
+                        + " x" + d.getCantidad()
+                        + " - $" + d.getSubtotal()
+                );
+            }
+
+            System.out.println("--------------------------------");
+            System.out.println("Subtotal: $" + venta.getSubtotal());
+            System.out.println("IVA: $" + venta.getIva());
+            System.out.println("TOTAL: $" + venta.getTotal());
+            System.out.println("================================\n");
         }
-
-        System.out.println("--------------------------------");
-        System.out.println("Subtotal: $" + venta.getSubtotal());
-        System.out.println("IVA: $" + venta.getIva());
-        System.out.println("TOTAL: $" + venta.getTotal());
-        System.out.println("================================\n");
+        return true;
     }
-    return true;
 }

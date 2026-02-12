@@ -6,6 +6,7 @@ public class MenuPrincipal extends MenuBase {
     private final MenuCelular menuCelular;
     private final MenuCliente menuCliente;
     private final MenuVenta menuVenta;
+    private final MenuReportes menuReportes;
 
     public MenuPrincipal() {
 
@@ -13,6 +14,7 @@ public class MenuPrincipal extends MenuBase {
         menuCelular = new MenuCelular();
         menuCliente = new MenuCliente();
         menuVenta = new MenuVenta();
+        menuReportes = new MenuReportes();
     }
 
     @Override
@@ -30,11 +32,12 @@ public class MenuPrincipal extends MenuBase {
                            2. Celulares
                            3. Clientes
                            4. Ventas
+                           5. Reportes
                            
                            0. Salir
                                """);
 
-            opcion = input.leerIntRango("Opcion: ", 0, 4);
+            opcion = input.leerIntRango("Opcion: ", 0, 5);
 
             switch (opcion) {
 
@@ -42,6 +45,7 @@ public class MenuPrincipal extends MenuBase {
                 case 2 -> menuCelular.iniciar();
                 case 3 -> menuCliente.iniciar();
                 case 4 -> menuVenta.iniciar();
+                case 5 -> menuReportes.iniciar();
                 case 0 -> System.out.println("Adios");
             }
 

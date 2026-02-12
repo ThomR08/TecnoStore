@@ -1,6 +1,9 @@
 package dao;
 
+import dto.VentasMensualesDTO;
+import java.math.BigDecimal;
 import java.sql.*;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import model.Cliente;
@@ -81,37 +84,6 @@ public class VentaDAO {
         return null;
     }
     
-    public boolean update(Venta venta) throws SQLException {
-
-        String sql = """
-                     UPDATE Venta 
-                     SET cliente_id=?, subtotal=?, iva=?, total=?
-                     WHERE id=?
-                     """;
-
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setLong(1, venta.getCliente().getId());
-            ps.setBigDecimal(2, venta.getSubtotal());
-            ps.setBigDecimal(3, venta.getIva());
-            ps.setBigDecimal(4, venta.getTotal());
-            ps.setLong(6, venta.getId());
-
-            return ps.executeUpdate() > 0;
-        }
-    }
-    
-    public boolean delete(long id) throws SQLException {
-
-        String sql = "DELETE FROM Venta WHERE id=?";
-
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setLong(1, id);
-            return ps.executeUpdate() > 0;
-        }
-    }
-    
     public List<Venta> list() throws SQLException {
 
         List<Venta> ventas = new ArrayList<>();
@@ -149,5 +121,38 @@ public class VentaDAO {
         }
 
         return ventas;
+    }
+    
+    public List<VentasMensualesDTO> ventasPorMes() throws SQLException {
+
+        List<VentasMensualesDTO> lista = new ArrayList<>();
+
+        String sql = """
+                     SELECT 
+                        YEAR(fecha) AS anio, 
+                        MONTH(fecha) AS mes, 
+                        COUNT(id) AS cantidad_ventas, 
+                        SUM(total) AS total_vendido 
+                     FROM Venta 
+                     GROUP BY YEAR(fecha), MONTH(fecha) 
+                     ORDER BY anio DESC, mes DESC
+                     """;
+
+        try (PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+
+                int anio = rs.getInt("anio");
+                int mes = rs.getInt("mes");
+                int cantidad = rs.getInt("cantidad_ventas");
+                BigDecimal total = rs.getBigDecimal("total_vendido");
+
+                YearMonth periodo = YearMonth.of(anio, mes);
+
+                lista.add(new VentasMensualesDTO(periodo, cantidad, total));
+            }
+        }
+
+        return lista;
     }
 }
