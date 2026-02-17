@@ -134,7 +134,7 @@ public class GestorCelular {
                 try {
                     writer.write("ID: " + celular.getId()
                             + " | Modelo: " + celular.getModelo()
-                            + " | Marca: " + celular.getMarca()
+                            + " | Marca: " + celular.getMarca().getNombre()
                             + " | Stock: " + celular.getStock()
                             + " | Precio: " + df.format(celular.getPrecio()) + "\n");
                 } catch (IOException ex) {
