@@ -6,11 +6,13 @@ import dto.CelularVendidoDTO;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import model.Celular;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -117,20 +119,28 @@ public class GestorCelular {
         if (!archivo.getName().toLowerCase().endsWith(".txt")) {
             archivo = new File(archivo.getAbsolutePath() + ".txt");
         }
+        
+        // Conversion a Stream
+        Stream<Celular> streamCelulares = celulares.stream();
 
         DecimalFormat df = new DecimalFormat("#,##0.00");
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
 
             writer.write("========== ALERTA DE STOCK BAJO ==========\n\n");
-
-            for (Celular celular : celulares) {
-                writer.write("ID: " + celular.getId() 
-                        + " | Modelo: " + celular.getModelo() 
-                        + " | Marca: " + celular.getMarca() 
-                        + " | Stock: " + celular.getStock() 
-                        + " | Precio: " + df.format(celular.getPrecio()) + "\n");
-            }
+            
+            streamCelulares.forEach(celular -> 
+                {
+                try {
+                    writer.write("ID: " + celular.getId()
+                            + " | Modelo: " + celular.getModelo()
+                            + " | Marca: " + celular.getMarca()
+                            + " | Stock: " + celular.getStock()
+                            + " | Precio: " + df.format(celular.getPrecio()) + "\n");
+                } catch (IOException ex) {
+                    System.getLogger(GestorCelular.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+                }
+            });
         }
 
         System.out.println("\nReporte generado en: " + archivo.getAbsolutePath());
