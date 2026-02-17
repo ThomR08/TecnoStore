@@ -3,10 +3,16 @@ package controller;
 import dao.DBConnection;
 import dao.CelularDAO;
 import dto.CelularVendidoDTO;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import model.Celular;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.List;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class GestorCelular {
 
@@ -78,12 +84,55 @@ public class GestorCelular {
         }
         return dao.delete(id);
     }
-    
+
     public List<Celular> celularesStockBajo() throws SQLException {
         return dao.celularesStockBajo();
     }
 
     public List<CelularVendidoDTO> top3MasVendidos() throws SQLException {
         return dao.top3MasVendidos();
+    }
+
+    public void generarReporteStockTXT(List<Celular> celulares) throws Exception {
+
+        if (celulares.isEmpty()) {
+            throw new Exception("No hay ventas registradas.");
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Guardar reporte de stock");
+
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Archivo de texto (*.txt)", "txt"));
+        fileChooser.setSelectedFile(new File("reporte_stock.txt"));
+
+        int userSelection = fileChooser.showSaveDialog(null);
+
+        if (userSelection != JFileChooser.APPROVE_OPTION) {
+            throw new Exception("Operación cancelada por el usuario.");
+        }
+
+        File archivo = fileChooser.getSelectedFile();
+
+        // Asegurar extensión .txt
+        if (!archivo.getName().toLowerCase().endsWith(".txt")) {
+            archivo = new File(archivo.getAbsolutePath() + ".txt");
+        }
+
+        DecimalFormat df = new DecimalFormat("#,##0.00");
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
+
+            writer.write("========== ALERTA DE STOCK BAJO ==========\n\n");
+
+            for (Celular celular : celulares) {
+                writer.write("ID: " + celular.getId() 
+                        + " | Modelo: " + celular.getModelo() 
+                        + " | Marca: " + celular.getMarca() 
+                        + " | Stock: " + celular.getStock() 
+                        + " | Precio: " + df.format(celular.getPrecio()) + "\n");
+            }
+        }
+
+        System.out.println("\nReporte generado en: " + archivo.getAbsolutePath());
     }
 }

@@ -33,7 +33,7 @@ public class MenuReportes extends MenuBase {
                     0. Volver
                     """);
 
-            opcion = input.leerIntRango("Opción: ", 0, 4);
+            opcion = input.leerIntRango("Opción: ", 0, 5);
 
             try {
 
@@ -69,7 +69,29 @@ public class MenuReportes extends MenuBase {
                 + c.getMarca().getNombre() + " "
                 + c.getModelo()
                 + " | Stock: " + c.getStock()
+                + " | Precio: "+ c.getPrecio()
         ));
+        
+        boolean generarReporte;
+        char respuesta;
+
+        do {
+            respuesta = Character.toLowerCase(
+                    input.leerChar("\n\n¿Deseas generar el reporte .TXT? (s/n): ")
+            );
+
+            if (respuesta != 's' && respuesta != 'n') {
+                System.out.println("    Error: Ingrese solo 's' o 'n'.");
+            }
+
+        } while (respuesta != 's' && respuesta != 'n');
+
+        generarReporte = (respuesta == 's');
+        
+        if (generarReporte) {
+            gestorCelular.generarReporteStockTXT(lista);
+        }
+        
     }
     
     private void top3() throws Exception {
